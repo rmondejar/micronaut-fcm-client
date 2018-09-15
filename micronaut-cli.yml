@@ -1,0 +1,5 @@
+profile: service
+defaultPackage: io.push
+---
+testFramework: spock
+sourceLanguage: groovy
