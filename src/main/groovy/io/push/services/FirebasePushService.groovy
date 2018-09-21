@@ -10,10 +10,15 @@ import io.push.conf.FirebaseConfiguration
 import io.push.data.FirebaseMessage
 import io.push.data.FirebaseResult
 import io.push.data.Message
+import io.push.data.Result
 import io.reactivex.Flowable
+import io.reactivex.Single
 
 import javax.inject.Inject
 import javax.inject.Singleton
+import java.util.concurrent.CompletableFuture
+
+import static net.javacrumbs.futureconverter.java8rx.FutureConverter.*;
 
 @Singleton
 @Slf4j
@@ -39,9 +44,10 @@ class FirebasePushService implements PushService {
 
 
     @Override
-    boolean push(Message msg) {
+    Single<Result> push(Message msg) {
 
-        if (!validationService.check(msg)) return false
+        boolean isValid = validationService.check(msg)
+        if (!isValid) return Single.just(new FirebaseResult(error:"wrong validation")) as Single<Result>
 
         FirebaseMessage firebaseMsg = new FirebaseMessage(msg)
 
@@ -49,11 +55,9 @@ class FirebasePushService implements PushService {
 
         req.header("Authorization","key=$serverKey").header("Content-Type", "application/json")
 
-        Flowable<HttpResponse<FirebaseResult>> flowable = httpClient.exchange(req, FirebaseResult.class)
+        Single<Result> single = httpClient.retrieve(req, FirebaseResult.class).singleOrError() as Single<Result>
 
-        FirebaseResult result = flowable.blockingFirst().body()
-
-        result.messageId
+        single
     }
 
     void close() {

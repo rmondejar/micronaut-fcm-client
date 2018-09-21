@@ -2,7 +2,10 @@ package io.push.services
 
 import io.micronaut.context.annotation.Primary
 import io.micronaut.context.annotation.Requires
+import io.push.data.FirebaseResult
+import io.push.data.Result
 import io.push.data.Message
+import io.reactivex.Single
 
 import javax.inject.Singleton
 
@@ -14,11 +17,13 @@ class MockPushService implements PushService {
     List<Message> messages = []
 
     @Override
-    boolean push(Message msg) {
+    Single<Result> push(Message msg) {
         messages << msg
-        true
+        Single.just(new FirebaseResult(messageId: "000000000000")) as Single<Result>
     }
 
     @Override
-    void close() {}
+    void close() {
+        messages.clear()
+    }
 }
