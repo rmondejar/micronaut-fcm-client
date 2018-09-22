@@ -16,9 +16,6 @@ import io.reactivex.Single
 
 import javax.inject.Inject
 import javax.inject.Singleton
-import java.util.concurrent.CompletableFuture
-
-import static net.javacrumbs.futureconverter.java8rx.FutureConverter.*;
 
 @Singleton
 @Slf4j
