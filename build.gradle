@@ -6,6 +6,7 @@ buildscript {
     dependencies {
         classpath "com.github.jengelman.gradle.plugins:shadow:2.0.4"
         classpath "io.spring.gradle:dependency-management-plugin:1.0.5.RELEASE"
+        classpath "net.ltgt.gradle:gradle-apt-plugin:0.15"
     }
 }
 
@@ -16,6 +17,9 @@ apply plugin:"io.spring.dependency-management"
 apply plugin:"com.github.johnrengelman.shadow"
 apply plugin:"application"
 apply plugin:"groovy"
+apply plugin:"java"
+apply plugin:"net.ltgt.apt-eclipse"
+apply plugin:"net.ltgt.apt-idea"
 
 
 repositories {
@@ -26,22 +30,37 @@ repositories {
 
 dependencyManagement {
     imports {
-        mavenBom 'io.micronaut:bom:1.0.0.M4'
+        mavenBom "io.micronaut:micronaut-bom:$micronautVersion"
     }
 }
 
-dependencies {
-    compile "io.micronaut:http-client"
-    compile "io.micronaut:http-server-netty"
-    compile "io.micronaut:runtime-groovy"
-    compileOnly "io.micronaut:inject-groovy"
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url "https://plugins.gradle.org/m2/" }
+    }
+    dependencies {
+        classpath "com.github.jengelman.gradle.plugins:shadow:2.0.4"
+        classpath "io.spring.gradle:dependency-management-plugin:1.0.5.RELEASE"
+        classpath "net.ltgt.gradle:gradle-apt-plugin:0.15"
+    }
+}
 
-    compile "io.micronaut:validation"
-    compile "io.micronaut.configuration:hibernate-validator"
+
+
+dependencies {
+
+    compile "io.micronaut:micronaut-http-client"
+    compile "io.micronaut:micronaut-http-server-netty"
+    compile "io.micronaut:micronaut-runtime-groovy"
+    compileOnly "io.micronaut:micronaut-inject-groovy"
+
+    compile "io.micronaut:micronaut-validation:$micronautVersion"
+    compile "io.micronaut.configuration:micronaut-hibernate-validator:$micronautVersion"
 
     runtime "ch.qos.logback:logback-classic:1.2.3"
-    testCompile "io.micronaut:inject-groovy"
-    testCompile("org.spockframework:spock-core:1.1-groovy-2.4") {
+    testCompile "io.micronaut:micronaut-inject-groovy"
+    testCompile("org.spockframework:spock-core:1.2-groovy-2.5") {
         exclude group: "org.codehaus.groovy", module: "groovy-all"
     }
 
@@ -54,3 +73,5 @@ shadowJar {
 run.jvmArgs('-noverify', '-XX:TieredStopAtLevel=1')
 
 mainClassName = "io.push.Application"
+compileJava.options.compilerArgs += '-parameters'
+compileTestJava.options.compilerArgs += '-parameters'

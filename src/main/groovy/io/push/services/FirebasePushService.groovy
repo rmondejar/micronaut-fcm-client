@@ -3,16 +3,16 @@ package io.push.services
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import io.micronaut.http.HttpRequest
-import io.micronaut.http.HttpResponse
-import io.micronaut.http.client.Client
 import io.micronaut.http.client.RxHttpClient
+import io.micronaut.http.client.annotation.Client
+import io.reactivex.Single
+
 import io.push.conf.FirebaseConfiguration
 import io.push.data.FirebaseMessage
 import io.push.data.FirebaseResult
 import io.push.data.Message
 import io.push.data.Result
-import io.reactivex.Flowable
-import io.reactivex.Single
+
 
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -30,7 +30,7 @@ class FirebasePushService implements PushService {
 
     @Inject
     FirebasePushService(@Client(FirebaseConfiguration.FCM_API_URL) RxHttpClient httpClient,
-                          FirebaseConfiguration configuration, ValidationService validationService) {
+                        FirebaseConfiguration configuration, ValidationService validationService) {
 
         this.httpClient = httpClient
         uri = FirebaseConfiguration.FCM_API_URL + "/send"

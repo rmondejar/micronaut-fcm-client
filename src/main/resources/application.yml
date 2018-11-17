@@ -1,8 +1,8 @@
 micronaut:
     application:
         name: io.push
-    #server:
-    #    port: 8080
+    server:
+        port: 8080
 
 fcm:
    serverKey: YOUR_SERVER_KEY
